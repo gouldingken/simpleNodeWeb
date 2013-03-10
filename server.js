@@ -10,7 +10,7 @@ app = http.createServer(function(req, res) {
     });
     req.addListener("end", function () {
         res.writeHeader(200, {"Content-Type": "application/json"});
-        res.write(JSON.stringify({result:'it works'}));
+        res.write(JSON.stringify({result:'it works', env:process.env.TEST_VAR}));
         res.end();
     });
 });
