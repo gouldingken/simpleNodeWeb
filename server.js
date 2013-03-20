@@ -10,7 +10,11 @@ app = http.createServer(function (req, res) {
     });
     req.addListener("end", function () {
         res.writeHeader(200, {"Content-Type": "application/json"});
-        res.write(JSON.stringify({result: 'test env', env: 'testVar_' + process.env.TEST_VAR + '_' + process.env.TEST_VAR2}));
+        res.write(JSON.stringify({
+            result: 'test env',
+            env: 'testVar_' + process.env.TEST_VAR + '_' + process.env.TEST_VAR2,
+            mem: process.env.MEMC_PATH
+        }));
         res.end();
     });
 });
