@@ -12,7 +12,7 @@ app = http.createServer(function (req, res) {
         res.writeHeader(200, {"Content-Type": "application/json"});
         res.write(JSON.stringify({
             result: 'test env',
-            env: 'testVar_' + process.env.TEST_VAR + '_' + process.env.TEST_VAR2,
+            env: 'testVar_' + process.env.APIKEY + '_' + process.env.PORT,
             mem: 'mem '+process.env.MEMC_PATH
         }));
         res.end();
@@ -20,4 +20,4 @@ app = http.createServer(function (req, res) {
 });
 app.listen(80);//, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:80/');
-console.log('VARS: '+ process.env.TEST_VAR + '_' + process.env.TEST_VAR2);
+console.log('VARS: '+ process.env.APIKEY + '_' + process.env.PORT);
