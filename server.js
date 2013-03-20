@@ -13,7 +13,7 @@ app = http.createServer(function (req, res) {
         res.write(JSON.stringify({
             result: 'test env',
             env: 'testVar_' + process.env.TEST_VAR + '_' + process.env.TEST_VAR2,
-            mem: process.env.MEMC_PATH
+            mem: 'mem '+process.env.MEMC_PATH
         }));
         res.end();
     });
