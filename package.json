@@ -1,12 +1,13 @@
 {
-  "name": "simpleNodeWeb",
-  "scripts": {
-    "start": "server.js"
-  },
-  "version": "0.0.1-0",
-  "dependencies": {
-  },
-  "engines": {
-    "node": "0.8.x"
-  }
+    "name": "simpleNodeWeb",
+    "scripts": {
+        "start": "server.js"
+    },
+    "version": "0.0.1-0",
+    "dependencies": {
+        "js-yaml": "https://github.com/nodeca/js-yaml/tarball/master"
+    },
+    "engines": {
+        "node": "0.8.x"
+    }
 }
