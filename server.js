@@ -1,11 +1,13 @@
 var http = require("http");
-
-var distc = require("server/modules/core/distCache");
+var logger = require("./server/modules/logger");
+var distc = require("./server/modules/core/distCache");
 
 var connected = false;
 var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function() {
     connected = true;
 });
+
+logger.log('starting simpleNodeWeb');
 
 var app;
 app = http.createServer(function (req, res) {
@@ -27,4 +29,4 @@ app = http.createServer(function (req, res) {
 });
 app.listen(80);//, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:80/');
-console.log('VARS: '+ process.env.APIKEY + '_' + process.env.PORT);
+//console.log('VARS: '+ process.env.APIKEY + '_' + process.env.PORT);
