@@ -1,4 +1,6 @@
 var http = require("http");
+var url = require('url');
+
 var logger = require("./server/modules/logger");
 var distc = require("./server/modules/core/distCache");
 
@@ -9,43 +11,28 @@ var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function () {
     connected = true;
 });
 
-var _testMem = function (callback) {
-    var v1;
-    var v2;
-    var cb = function () {
-        if (v1 && v2) callback({v1: v1, v2: v2});
-    };
+var _testMem = function (setKey, getKey, name, callback) {
+    setKey = setKey || 'structured';
+    getKey = getKey || 'structured';
+    name = name || 'unknown';
+
     var structured = {
-        name: 'fred',
+        name: name,
         age: 35,
         kids: ['joe', 'pete']
     };
 
-    distCache.set('structured', structured, function () {
-        logger.log('set structured');
-        distCache.get('structured', function (val) {
-            logger.log('got structured');
-            if (!val) {
-                v2 = 'err';
-            } else {
-                v2 = val;
-            }
-            cb();
+    distCache.set(setKey, structured, function () {
+        distCache.get(getKey, function (val) {
+            callback(val);
         })
     });
 
-    distCache.set('btest', 500, function () {
-        logger.log('set btest');
-        distCache.get('btest', function (val) {
-            logger.log('got btest');
-            if (!val) {
-                v1 = 'err';
-            } else {
-                v1 = val;
-            }
-            cb();
-        })
-    });
+};
+
+var _getQuery = function (req) {
+    var url_parts = url.parse(req.url, true);
+    return url_parts.query;
 };
 
 var app;
@@ -57,7 +44,8 @@ app = http.createServer(function (req, res) {
         postDataStr += postDataChunk;
     });
     req.addListener("end", function () {
-        _testMem(function (ans) {
+        var q = _getQuery(req);
+        _testMem(q.setKey, q.getKey, q.name, function (ans) {
             res.writeHeader(200, {"Content-Type": "application/json"});
             res.write(JSON.stringify(ans));
             res.end();
