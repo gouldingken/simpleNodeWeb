@@ -4,18 +4,35 @@ var distc = require("./server/modules/core/distCache");
 
 var connected = false;
 /** @type DistCache */
-var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function() {
+var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function () {
     connected = true;
 });
 
 logger.log('starting simpleNodeWeb');
 
 var _testMem = function (callback) {
-    distCache.set('atest', 100, function() {
-        distCache.get('atest', function(val) {
-            callback(val);
+    var v1;
+    var v2;
+    var cb = function () {
+        if (v1 && v2) callback({v1: v1, v2: v2});
+    };
+    var structured = {
+        name: 'fred',
+        age: 35,
+        kids: ['joe', 'pete']
+    };
+
+    distCache.set('structured', structured, function () {
+        distCache.get('structured', function (val) {
+            v2 = val;
+            cb();
         })
-    })
+    });
+    distCache.get('atest', function (val) {
+        v1 = val;
+        cb();
+    });
+
 };
 
 var app;
@@ -27,7 +44,7 @@ app = http.createServer(function (req, res) {
         postDataStr += postDataChunk;
     });
     req.addListener("end", function () {
-        _testMem(function(ans) {
+        _testMem(function (ans) {
             res.writeHeader(200, {"Content-Type": "application/json"});
             res.write(JSON.stringify(ans));
             res.end();
