@@ -2,13 +2,12 @@ var http = require("http");
 var logger = require("./server/modules/logger");
 var distc = require("./server/modules/core/distCache");
 
+logger.log('---------------starting simpleNodeWeb');
 var connected = false;
 /** @type DistCache */
 var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function () {
     connected = true;
 });
-
-logger.log('starting simpleNodeWeb');
 
 var _testMem = function (callback) {
     var v1;
@@ -23,12 +22,15 @@ var _testMem = function (callback) {
     };
 
     distCache.set('structured', structured, function () {
+        logger.log('set structured');
         distCache.get('structured', function (val) {
+            logger.log('got structured');
             v2 = val;
             cb();
         })
     });
     distCache.get('atest', function (val) {
+        logger.log('got atest');
         v1 = val;
         cb();
     });
