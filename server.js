@@ -3,11 +3,20 @@ var logger = require("./server/modules/logger");
 var distc = require("./server/modules/core/distCache");
 
 var connected = false;
+/** @type DistCache */
 var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function() {
     connected = true;
 });
 
 logger.log('starting simpleNodeWeb');
+
+var _testMem = function (callback) {
+    distCache.set('atest', 100, function() {
+        distCache.get('atest', function(val) {
+            callback(val);
+        })
+    })
+};
 
 var app;
 app = http.createServer(function (req, res) {
@@ -18,13 +27,11 @@ app = http.createServer(function (req, res) {
         postDataStr += postDataChunk;
     });
     req.addListener("end", function () {
-        res.writeHeader(200, {"Content-Type": "application/json"});
-        res.write(JSON.stringify({
-            result: 'test env',
-            env: 'testVar_' + process.env.APIKEY + '_' + process.env.PORT,
-            connected: connected
-        }));
-        res.end();
+        _testMem(function(ans) {
+            res.writeHeader(200, {"Content-Type": "application/json"});
+            res.write(JSON.stringify(ans));
+            res.end();
+        });
     });
 });
 app.listen(80);//, '127.0.0.1');
