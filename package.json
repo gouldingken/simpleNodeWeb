@@ -5,6 +5,7 @@
     },
     "version": "0.0.1-0",
     "dependencies": {
+        "mc": "1.0.x",
         "js-yaml": "https://github.com/nodeca/js-yaml/tarball/master"
     },
     "engines": {

@@ -1,15 +1,11 @@
 var http = require("http");
-require('js-yaml');
 
-// Get document, or throw exception on error
-var yammil;
-try {
-    yammil = require(process.env.MEMC_PATH);
-    console.log(yammil);
-} catch (e) {
-    yammil = '--error--';
-    console.log(e);
-}
+var distc = require("server/modules/core/distCache");
+
+var connected = false;
+var distCache = new distc.DistCache(distc.cacheTypes.MEMCACHE, function() {
+    connected = true;
+});
 
 var app;
 app = http.createServer(function (req, res) {
@@ -24,7 +20,7 @@ app = http.createServer(function (req, res) {
         res.write(JSON.stringify({
             result: 'test env',
             env: 'testVar_' + process.env.APIKEY + '_' + process.env.PORT,
-            mem: 'mem '+yammil
+            connected: connected
         }));
         res.end();
     });
