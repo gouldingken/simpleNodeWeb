@@ -11,9 +11,9 @@ var logger = require("../logger");
 
 /** @enum {Number} */
 cacheTypes = {
-    REDIS:0,
-    MEMCACHE:1,
-    NONDISTRIBUTED:2  //--Useful for testing locally. Can be used on single drones only.
+    REDIS: 0,
+    MEMCACHE: 1,
+    NONDISTRIBUTED: 2  //--Useful for testing locally. Can be used on single drones only.
 };
 
 /**
@@ -48,15 +48,15 @@ DistCache = function (type, onReady) {
     };
 
     var _init = function () {
-        if(_type == cacheTypes.NONDISTRIBUTED) {
+        if (_type == cacheTypes.NONDISTRIBUTED) {
             if (_nondist) return;//already configured
             _nondist = {};
             _get = function (key, callback) {
                 callback(_nondist[key]);
             };
             _set = function (key, val, callback) {
-                _nondist[key]=val;
-                if(callback) callback();
+                _nondist[key] = val;
+                if (callback) callback();
             };
             if (_onReady) _onReady();
         } else if (_type == cacheTypes.REDIS) {
@@ -114,16 +114,20 @@ DistCache = function (type, onReady) {
 
             _get = function (key, callback) {
                 _memCli.get(key, function (err, response) {
-                        if (!err) {
-                            callback(response[key]);
-                        }
+                    if (!err) {
+                        callback(response[key]);
+                    } else {
+                        callback(false);
                     }
-                );
+                });
             };
 
             _set = function (key, val, callback) {
                 var oneDay = 60 * 60 * 24;
-                _memCli.set(key, val, {flags:0, exptime:oneDay}, function () {
+                if (typeof val === 'object') {
+                    val = JSON.stringify(val);//mc client will return an Object automatically, but won't stringify them
+                }
+                _memCli.set(key, val, {flags: 0, exptime: oneDay}, function (err, response) {
                     if (callback) callback();
                 });
             };

@@ -25,16 +25,27 @@ var _testMem = function (callback) {
         logger.log('set structured');
         distCache.get('structured', function (val) {
             logger.log('got structured');
-            v2 = val;
+            if (!val) {
+                v2 = 'err';
+            } else {
+                v2 = val;
+            }
             cb();
         })
     });
-    distCache.get('atest', function (val) {
-        logger.log('got atest');
-        v1 = val;
-        cb();
-    });
 
+    distCache.set('btest', 500, function () {
+        logger.log('set btest');
+        distCache.get('btest', function (val) {
+            logger.log('got btest');
+            if (!val) {
+                v1 = 'err';
+            } else {
+                v1 = val;
+            }
+            cb();
+        })
+    });
 };
 
 var app;
