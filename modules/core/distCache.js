@@ -5,7 +5,7 @@
 
 //endregion
 //region modules
-var config = require("../../config");
+var config = require("../config");
 var logger = require("../logger");
 //endregion
 

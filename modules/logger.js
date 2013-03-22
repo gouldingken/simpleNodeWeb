@@ -1,5 +1,5 @@
 var loggly = require('loggly');
-var config = require('../config');
+var config = require('./config');
 var verbose = (process.env.NODE_ENV == 'production') ? 0 : 1;
 
 var osId = require('os').hostname().split('-')[0];
